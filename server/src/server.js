@@ -12,10 +12,26 @@ const seedAdmin = require('./utils/seedAdmin');
 
 const app = express();
 const port = process.env.PORT || 5000;
+const normalizeOrigin = (value) => String(value || '').replace(/\/+$/, '');
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => normalizeOrigin(origin.trim()))
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow non-browser clients and same-origin calls without an Origin header.
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(normalizeOrigin(origin))) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   })
 );
