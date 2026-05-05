@@ -9,6 +9,7 @@ const recipeRoutes = require('./routes/recipeRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const seedAdmin = require('./utils/seedAdmin');
+const seedRecipes = require('./utils/seedRecipes');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -54,6 +55,7 @@ const start = async () => {
   try {
     await connectDB();
     await seedAdmin();
+    await seedRecipes();
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
